@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well well-sm">
+                <div class="panel panel-primary" style="margin-bottom:0px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ list.name }}
+                            <a class="btn btn-xs btn-success pull-right" href="{% url 'lists' %}?action=edit&id={{ list.id }}" style="margin-left:3px;">Edit List</a>
+                            <a class="btn btn-xs btn-danger pull-right" href="{% url 'lists' %}?action=delete&id={{ list.id }}">Delete List</a>
+                            <span class="pull-right" style="padding:0px 20px;">|</span>
+                            <a class="btn btn-xs btn-success pull-right" href="{% url 'lists' %}?action=add_task&id={{ list.id }}" style="color:#FFFFFF;">Add Task</a>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-group-item-success"><strong>Due Date:</strong></li>
+                                    <li class="list-group-item list-group-item-warning"><strong>Priority:</strong></li>
+                                    <li class="list-group-item"><strong>Assigned To:</strong></li>
+                                    <li class="list-group-item"><strong>Created By:</strong></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-9">
+                                <ul class="list-group">
+                                    <li class="list-group-item list-group-item-success">{% if list.due_date %}{{ list.due_date }}{% endif %}</li>
+                                    <li class="list-group-item list-group-item-warning">{{ list.get_priority_name }}</li>
+                                    <li class="list-group-item">{{ list.assigned_to }}</li>
+                                    <li class="list-group-item">{{ list.created_by }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="panel panel-info" style="margin-bottom:0px;">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Tasks:</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="well well-sm">
+                                                    <div class="panel panel-success" style="margin-bottom:0px;">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Complete <label class="label label-primary pull-right">{{ list.num_of_complete_tasks }}</label></h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            {% if list.complete_tasks %}
+                                                                <ul class="list-group">
+                                                                    {% for t in list.complete_tasks %}
+                                                                        <li class="list-group-item">
+                                                                            <h4>
+                                                                                <a href="{% url 'lists' %}?action=view_task&id={{ t.id }}">{{ t.title }}</a>
+                                                                                <span class="pull-right badge badge-warning">Completed: {{ t.completed_date }}</span>
+                                                                            </h4>
+                                                                            <span style="font-size:12px;">{{ t.note }}</span>
+                                                                            <div class="clearfix"></div>
+                                                                            <a class="btn btn-xs btn-warning pull-right" href="{% url 'lists' %}?action=mark_incomplete_task&id={{ t.id }}" style="margin-left:3px;">Mark Incomplete</a>
+                                                                            <a class="btn btn-xs btn-info pull-right" href="{% url 'lists' %}?action=view_task&id={{ t.id }}">View Comments</a>
+                                                                            <div class="clearfix"></div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            {% else %}
+                                                                <p>No completed tasks</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="well well-sm">
+                                                    <div class="panel panel-danger" style="margin-bottom:0px;">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title">Incomplete <label class="label label-primary pull-right">{{ list.num_of_incomplete_tasks }}</label></h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            {% if list.incomplete_tasks %}
+                                                                <ul class="list-group">
+                                                                    {% for t in list.incomplete_tasks %}
+                                                                        <li class="list-group-item">
+                                                                            <h4>
+                                                                                <a class="pull-left" href="{% url 'lists' %}?action=view_task&id={{ t.id }}">{{ t.title }}</a><span class="pull-left badge badge-warning" style="margin:0px 5px 0px 0px;">Priority: {{ t.get_priority_name }}</span>
+                                                                                <span class="pull-right badge badge-warning">Due: {{ t.due_date }}</span>
+                                                                            </h4>
+                                                                            <div class="clearfix"></div>
+                                                                            <span style="font-size:12px;margin:20px 0px;">{{ t.note }}</span>
+                                                                            <div class="clearfix"></div>
+                                                                            <a class="btn btn-xs btn-success pull-right" href="{% url 'lists' %}?action=edit_task&id={{ t.id }}" style="margin-left:3px;">Edit Task</a>
+                                                                            <a class="btn btn-xs btn-danger pull-right" href="{% url 'lists' %}?action=delete_task&id={{ t.id }}" style="margin-left:3px;">Delete Task</a>
+                                                                            <a class="btn btn-xs btn-primary pull-right" href="{% url 'lists' %}?action=mark_complete_task&id={{ t.id }}" style="margin-left:3px;">Mark Complete</a>
+                                                                            <a class="btn btn-xs btn-info pull-right" href="{% url 'lists' %}?action=view_task&id={{ t.id }}">View Comments</a>
+                                                                            <div class="clearfix"></div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            {% else %}
+                                                                <p>No completed tasks</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <a class="btn btn-success btn-xs pull-left" href="{% url 'lists' %}?action=view&id={{ task.list.id }}"><- Back to List</a>
+            <div class="clearfix"></div>
+            <br />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-primary" style="margin-bottom:0px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Task: {{ task.title }}
+                        <a class="btn btn-xs btn-success pull-right" href="{% url 'lists' %}?action=edit_task&id={{ task.id }}" style="margin-left:3px;">Edit List</a>
+                        <a class="btn btn-xs btn-danger pull-right" href="{% url 'lists' %}?action=delete_task&id={{ task.id }}">Delete List</a>
+                        </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <ul class="list-group">
+                                <li class="list-group-item"><strong>List:</strong></li>
+                                <li class="list-group-item list-group-item-success"><strong>Due Date:</strong></li>
+                                <li class="list-group-item list-group-item-warning"><strong>Priority:</strong></li>
+                                <li class="list-group-item"><strong>Assigned To:</strong></li>
+                                <li class="list-group-item"><strong>Created By:</strong></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-9">
+                            <ul class="list-group">
+                                <li class="list-group-item"><a href="{% url 'lists' %}?action=view&id={{ task.list.id }}">{{ task.list }}</a></li>
+                                <li class="list-group-item list-group-item-success">{% if task.due_date %}{{ task.due_date }}{% endif %}</li>
+                                <li class="list-group-item list-group-item-warning">{{ task.get_priority_name }}</li>
+                                <li class="list-group-item">{{ task.assigned_to }}</li>
+                                <li class="list-group-item">{{ task.created_by }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-info" style="margin-bottom:0px;">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Comments: <a class="btn btn-xs btn-success pull-right" href="{% url 'lists' %}?action=add_comment&id={{ task.id }}" style="color:#FFFFFF;">Add Comment</a></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="well well-sm">
+                                                {% if task.get_comments %}
+
+                                                    {% for c in task.get_comments %}
+                                                        <div class="panel panel-default">
+                                                            <div class="panel-heading">
+                                                                <strong>{{ c.author }}</strong> <span class="text-muted">commented on {{ c.date }}</span>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                {{ c.body }}
+                                                            </div><!-- /panel-body -->
+                                                        </div><!-- /panel panel-default -->
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="alert alert-warning">
+                                                        <p>
+                                                            There are no comments yet, be the first to comment.<br />
+                                                            <a class="btn btn-success btn-xs" href="{% url 'lists' %}?action=add_comment&id={{ task.id }}">Add a Comment</a>
+                                                        </p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

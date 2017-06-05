@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block scripts %}
+    <script type="text/javascript">
+    function submitForm(action){
+            var formID = "formulario";
+
+        $('.controls input').each(function () {
+            if ($(this).attr('type') == 'text') {
+                $(this).val($(this).val().trim());
+            }
+        });
+
+        var formdata = new FormData($("#"+formID)[0]);
+        $.ajax({
+            type: "POST",
+            url: action,
+            data: formdata,
+            success: function (data) {
+                $('.errorMessage').html('').hide();
+
+                if (data.result == 'ok') {
+                    alert(data.message);
+                    if (data.redirect_url) {
+                        location.href = data.redirect_url;
+                    }
+
+                }else{
+                    var error = "";
+                    if(data.errors) {
+                        for (var key in data.errors) {
+                            var value = data.errors[key];
+                            error = error +key.replace("_", " ").replace(/\w\S*/g, function (txt) {
+                                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                                }) + ": " + value+ "<br />";
+                        }
+                    }else{
+                        error = data.message
+                    }
+
+                    $('.errorMessage').html(error).show();
+                }
+            },
+            error: function () {
+                alert("Error ajax");
+            },
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    $(function(){
+        $('#id_due_date').datepicker();
+    });
+    </script>
+{% endblock scripts %}
+
+{% block content %}
+    <div class='row contact-form-area'>
+        <div class='col-md-12 col-sm-12'>
+            <div class="col-md-2 col-sm-2"></div>
+            <div class="col-md-8 col-sm-8">
+                <div id="wholeFormContainer">
+                    <div id="innerForm">
+                        <div id="formHeaderContainer">
+                            <div id="formTitle">
+                                <h3 id="formHeader">{% block title %}{% endblock %}</h3>
+                                <h4 id="formHeader2">{% block subtitle %}{% endblock %}</h4>
+                            </div>
+                        </div>
+                        <div id="formBodyWrap">
+                            <div class="errorMessage alert alert-danger" style="display:none;"></div>
+                            <form id="formulario" class='form-horizontal' enctype="multipart/form-data">
+
+                                {% block formextra %}{% endblock %}
+
+                                {% if is_delete %}
+                                    <p>Are you sure want to delete this?</p>
+                                {% else %}
+                                    {% for field in form %}
+                                        <div class="form-group field-{{ field.name }}">
+                                            <label for="id_{{ field.name }}" class="col-sm-3 control-label">
+                                                {% if field.field.required %}
+                                                    <span class="field_required" title="Field Required">*</span>
+                                                {% endif %}
+                                                {{ field.label }}
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <div style="width: {% if field.name == 'mobile' %}75%" class="pull-left{% else %}{% if field.field.widget.attrs.width %}{{ field.field.widget.attrs.width }}{% else %}100%{% endif %}{% endif %}">
+                                                    {{ field }}
+                                                </div>
+                                                <p class="help-text">{{ field.help_text }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                                {% block extrafields %}{% endblock %}
+
+                                <p style="text-align: right;">
+                                    <a href="{% block formback %}/{% endblock %}" class="form_cancel btn btn-info btn-lg pull-left"><i class="fa fa-arrow-left"></i> {% block buttoncancel %}Cancel{% endblock %}</a>
+                                    <a class="btn {% if is_delete %}btn-danger{% else %}btn-success{% endif %} btn-lg" id="formbutton" style="text-decoration: none" onclick="submitForm('{% block formaction %}/{% endblock %}');return false;"><i class="fa fa-check"></i> {% block buttonconfirm %}Save{% endblock %}</a>
+                                    {% block extrabuttons %}{% endblock %}
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% block extrainfo %}{% endblock %}
+            </div>
+            <div class="col-md-2 col-sm-2"></div>
+        </div>
+    </div>
+{% endblock %}

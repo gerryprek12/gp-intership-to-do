@@ -1,0 +1,9 @@
+{% extends "form.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block formaction %}{% url 'lists' %}{% endblock %}
+{% block formextra %}
+    <input type='hidden' name='action' value='add_task'/>
+    <input type='hidden' name='id' value='{{ list.id }}'/>
+{% endblock %}
+{% block formback %}{% url 'lists' %}?action=view&id={{ list.id }}{% endblock %}

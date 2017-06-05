@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>My Lists</h3>
+{% if lists %}
+    <p class="pull-right"><a class="btn btn-success btn-mini" href="{% url 'lists' %}?action=create">Create a new List</a></p>
+<table class="table table-striped table-condensed">
+<thead>
+    <tr>
+        <th>Name</th>
+        <th>Priority</th>
+        <th>Due Date</th>
+        <th>Created By</th>
+        <th>Assigned To</th>
+        <th># of Complete Tasks</th>
+        <th># of Incomplete Tasks</th>
+        <th>Actions</th></tr></thead>
+{% for l in lists %}
+    <tr class="{% if l.get_priority_name == 'Low' %}success{% else %}{% if l.get_priority_name == 'Medium' %}warning{% else %}danger{% endif %}{% endif %}">
+        <td><a href="{% url 'lists' %}?action=view&id={{ l.id }}">{{ l.name }}</a></td>
+        <td>{{ l.get_priority_name }}</td>
+        <td>{% if l.due_date %}{{ l.due_date }}{% endif %}</td>
+        <td>{{ l.created_by }}</td>
+        <td>{{ l.assigned_to }}</td>
+        <td>{{ l.num_of_complete_tasks }}</td>
+        <td>{{ l.num_of_incomplete_tasks }}</td>
+        <td>
+            <a class="btn btn-info btn-xs" href="{% url 'lists' %}?action=view&id={{ l.id }}">View</a>
+            <a class="btn btn-success btn-xs" href="{% url 'lists' %}?action=edit&id={{ l.id }}">Edit</a>
+            <a class="btn btn-danger btn-xs" href="{% url 'lists' %}?action=delete&id={{ l.id }}">Delete</a>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+    <p>You have no lists, would you like to:<br />
+        <a class="btn btn-success btn-mini" href="{% url 'lists' %}?action=create">Create a new List</a></p>
+{% endif %}
+{% endblock %}
